@@ -1,0 +1,152 @@
+/* ===== Reset & iOS-safe base ===== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;background:#000;height:100%;}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  color:#fff;
+  position:relative;
+  overscroll-behavior:none;
+  touch-action:manipulation;
+}
+button{font-family:inherit;touch-action:manipulation;user-select:none;cursor:pointer;}
+input,textarea{font-family:inherit;}
+
+/* iOS Safari zoom-on-focus fires when a focused field computes under 16px — keep every
+   text input/textarea at 16px minimum, never smaller, regardless of visual density. */
+input,textarea,select{font-size:16px;}
+
+/* ===== App shell: height driven by JS (--app-height) to track the Visual Viewport,
+   so the bottom action bar never gets shoved around / hidden by the iOS keyboard. ===== */
+.app-shell{
+  height:var(--app-height, 100dvh);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  z-index:2;
+  max-width:460px;
+  margin:0 auto;
+  width:100%;
+}
+
+/* ===================== SCENE (fixed, behind everything, decorative) ===================== */
+.stage{position:fixed;inset:0;z-index:0;overflow:hidden;background:
+  linear-gradient(180deg,#040611 0%,#0A0C1C 35%,#190F14 68%,#0D0806 100%);}
+.stars{position:absolute;inset:0 0 55% 0;}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.9}}
+.ray{position:absolute;top:-25%;width:120px;height:170%;transform-origin:top center;filter:blur(6px);
+  background:linear-gradient(180deg,rgba(255,196,120,.14),rgba(255,196,120,0) 65%);animation:sway ease-in-out infinite;}
+.r1{left:6%;transform:rotate(9deg);animation-duration:10s;}
+.r2{left:46%;transform:rotate(-5deg);animation-duration:12s;animation-delay:1s;}
+.r3{left:80%;transform:rotate(7deg);animation-duration:11s;}
+@keyframes sway{0%,100%{opacity:.45}50%{opacity:.85}}
+.cl{position:absolute;border-radius:50%;filter:blur(55px);mix-blend-mode:screen;}
+.cl1{width:360px;height:360px;background:radial-gradient(circle,#FF8A3D,transparent 70%);bottom:-8%;left:-6%;animation:drift1 17s ease-in-out infinite;}
+.cl2{width:320px;height:320px;background:radial-gradient(circle,#2DE2C9,transparent 70%);bottom:2%;right:-8%;animation:drift2 20s ease-in-out infinite;}
+.cl3{width:220px;height:220px;background:radial-gradient(circle,#2DE2C9,transparent 70%);bottom:30%;left:55%;opacity:.55;animation:drift3 15s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-10px)}}
+@keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-20px)}}
+@keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(25px,15px)}}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,transparent 30%,rgba(0,0,0,.55) 85%,rgba(0,0,0,.85) 100%);}
+.grain{position:absolute;inset:0;opacity:.045;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.rainfield{position:fixed;inset:0;z-index:1;pointer-events:none;}
+.streak{position:absolute;top:-10%;width:1.5px;height:120px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.35),transparent);
+  filter:blur(.4px);animation:fall linear infinite;}
+@keyframes fall{from{transform:translateY(-10%)}to{transform:translateY(110vh)}}
+
+/* ===================== GLASS PANEL ===================== */
+.domewrap{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;flex:1;min-height:0;}
+.dome{width:min(180px,38vw);height:min(180px,38vw);border-radius:50%;position:relative;margin-bottom:-13%;z-index:3;flex-shrink:0;
+  background:radial-gradient(circle at 42% 35%,rgba(255,255,255,.3),rgba(255,196,120,.1) 55%,rgba(45,226,201,.05) 80%);
+  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
+  border:1px solid rgba(255,255,255,.3);
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 30px 70px rgba(0,0,0,.6),0 0 60px rgba(255,196,120,.12);
+  animation:ambientsway 9s ease-in-out infinite;}
+.dome::before{content:'';position:absolute;top:14%;left:18%;width:30%;height:20%;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%);filter:blur(2px);}
+@keyframes ambientsway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.2deg)}}
+
+.frame{
+  width:100%;position:relative;z-index:2;overflow:hidden;
+  border-radius:clamp(28px,7vw,44px) clamp(32px,8vw,56px) clamp(24px,6vw,40px) clamp(34px,8.5vw,60px);
+  background:linear-gradient(170deg,rgba(255,255,255,.12),rgba(255,255,255,.02) 42%,rgba(45,226,201,.06));
+  backdrop-filter:blur(26px) saturate(175%);-webkit-backdrop-filter:blur(26px) saturate(175%);
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 -22px 50px rgba(0,0,0,.2) inset, 0 50px 100px rgba(0,0,0,.65);
+  display:flex;flex-direction:column;flex:1;min-height:0;
+}
+.caustic-overlay{position:absolute;inset:0;z-index:4;opacity:.3;mix-blend-mode:screen;pointer-events:none;}
+.caustic-overlay svg{width:140%;height:140%;position:absolute;top:-20%;left:-20%;}
+.frame::after{content:'';position:absolute;top:0;left:-40%;width:45%;height:100%;z-index:5;
+  background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.28) 50%,transparent 75%);
+  transform:skewX(-8deg);animation:wipe 9s ease-in-out infinite;pointer-events:none;}
+@keyframes wipe{0%{left:-45%}50%{left:120%}100%{left:120%}}
+.glassdrops{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;}
+.drop{position:absolute;width:5px;height:7px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.8),rgba(255,255,255,.15) 60%,transparent 75%);
+  filter:blur(.3px);animation:slide linear infinite;}
+@keyframes slide{from{transform:translateY(-5%)}to{transform:translateY(720px);}}
+
+header{padding:env(safe-area-inset-top, 14px) 22px 14px;position:relative;z-index:6;text-align:center;flex-shrink:0;}
+.eyebrow{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#FFE3B8;font-weight:600;margin:0 0 8px;}
+h1{margin:0;font-size:clamp(20px,5.5vw,25px);font-weight:700;letter-spacing:-.4px;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.55);}
+.sub{margin:8px 0 0;font-size:12.5px;color:rgba(255,255,255,.65);}
+.meta{display:flex;gap:8px;margin-top:14px;justify-content:center;flex-wrap:wrap;}
+.meta span{font-size:10.5px;color:#fff;border:1px solid rgba(255,255,255,.22);background:rgba(45,226,201,.08);
+  padding:5px 12px;border-radius:999px;}
+
+/* scrollable task list */
+main{padding:6px 16px 18px;position:relative;z-index:6;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0;}
+.card{background:linear-gradient(165deg,rgba(255,255,255,.14),rgba(255,255,255,.04));
+  backdrop-filter:blur(16px) saturate(155%);-webkit-backdrop-filter:blur(16px) saturate(155%);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:24px;padding:16px;margin-bottom:14px;position:relative;
+  box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 14px 34px rgba(0,0,0,.45);
+  transition:border-color .2s ease;}
+.card:focus-within{border-color:rgba(255,227,184,.55);}
+.card.invalid{border-color:rgba(255,92,92,.65);animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.task-num{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#1d1406;
+  background:linear-gradient(135deg,#FFE3B8,#2DE2C9);padding:5px 12px;border-radius:999px;}
+.remove-btn{color:#FF8A3D;font-size:13px;font-weight:600;background:none;border:none;padding:10px 4px;min-height:44px;}
+label{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);margin:12px 0 7px;}
+.err{display:none;font-size:11px;color:#FF8A3D;margin-top:6px;}
+.card.invalid .err{display:block;}
+input,textarea{
+  width:100%;padding:13px 14px;border:1px solid rgba(255,255,255,.16);border-radius:15px;
+  font-family:inherit;background:rgba(5,5,12,.4);color:#fff;-webkit-appearance:none;appearance:none;
+}
+input::placeholder,textarea::placeholder{color:rgba(255,255,255,.3);}
+input:focus,textarea:focus{outline:none;border-color:#FFE3B8;}
+textarea{resize:vertical;min-height:62px;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.status-pills{display:flex;gap:8px;margin-top:6px;}
+.pill{flex:1;text-align:center;padding:12px 0;border-radius:13px;border:1px solid rgba(255,255,255,.16);
+  font-size:12.5px;font-weight:600;color:rgba(255,255,255,.6);background:rgba(5,5,12,.3);
+  min-height:44px;transition:background .15s,color .15s,border-color .15s;}
+.pill[aria-pressed="true"]{background:linear-gradient(135deg,#2DE2C9,#FFE3B8);color:#1d1406;border-color:transparent;
+  box-shadow:0 6px 18px rgba(255,227,184,.3);}
+.add-btn{width:100%;padding:14px;border:1px dashed rgba(255,255,255,.28);border-radius:18px;background:rgba(255,255,255,.05);
+  color:rgba(255,255,255,.72);font-weight:600;font-size:13px;min-height:48px;}
+.add-btn:active{background:rgba(255,255,255,.1);}
+
+/* bottom action bar — a normal flex child, never position:fixed, so iOS keyboard resize
+   (handled via --app-height) keeps it exactly where expected, no floating/overlap bugs */
+.bottom-bar{
+  flex-shrink:0;z-index:7;padding:10px 16px calc(env(safe-area-inset-bottom, 10px) + 10px);
+  position:relative;
+}
+.submit{width:100%;padding:16px;border:1px solid rgba(255,255,255,.4);border-radius:20px;font-weight:700;
+  font-size:15.5px;color:#1d1406;background:linear-gradient(135deg,#FFE3B8,#2DE2C9);
+  box-shadow:0 20px 46px rgba(255,227,184,.22);transition:transform .15s ease,opacity .15s ease;min-height:50px;}
+.submit:active{transform:scale(.97);}
+.submit:disabled{opacity:.55;}
+.status-msg{text-align:center;font-size:12.5px;margin:10px 0 0;min-height:16px;color:rgba(255,255,255,.75);}
+.status-msg.success{color:#2DE2C9;}
+.status-msg.error{color:#FF8A3D;}
+
+@media (prefers-reduced-motion: reduce){
+  .star,.ray,.cl1,.cl2,.cl3,.streak,.drop,.frame::after,.dome{animation:none !important;}
+}
