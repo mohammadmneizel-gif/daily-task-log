@@ -10,6 +10,31 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<script>
+  // Catches failures as early as possible (even config.js/app.js failing to load), so a real
+  // failure on a phone with no devtools shows up as visible text instead of a silent blank page.
+  window.__fatalErrors = [];
+  function __showFatalError(label, detail) {
+    window.__fatalErrors.push(label + ": " + detail);
+    var banner = document.getElementById("fatalError");
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.id = "fatalError";
+      banner.style.cssText =
+        "position:fixed;top:0;left:0;right:0;z-index:9999;background:#B91C1C;color:#fff;" +
+        "font-family:monospace;font-size:12px;padding:10px 14px;white-space:pre-wrap;" +
+        "max-height:40vh;overflow:auto;";
+      (document.body || document.documentElement).appendChild(banner);
+    }
+    banner.textContent = window.__fatalErrors.join("\n\n");
+  }
+  window.addEventListener("error", function (e) {
+    __showFatalError("Error", (e.error && e.error.stack) || e.message || "unknown script error");
+  }, true);
+  window.addEventListener("unhandledrejection", function (e) {
+    __showFatalError("Unhandled promise rejection", (e.reason && (e.reason.stack || e.reason.message)) || String(e.reason));
+  });
+</script>
 </head>
 <body>
 
