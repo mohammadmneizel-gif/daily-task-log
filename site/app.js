@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  // Global error/rejection reporting (the red banner) is installed in index.html's inline
+  // <head> script, deliberately before this file loads — see __showFatalError there.
+
   /* ---------- iOS keyboard-safe viewport height ---------- */
   function setAppHeight() {
     var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
