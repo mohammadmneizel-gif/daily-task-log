@@ -92,9 +92,7 @@
     return now;
   }
 
-  var logDateInput = document.getElementById("logDate");
   var displaySub = document.getElementById("sub");
-  var userChangedDate = false;
   var isoDate = toIsoDate(defaultLogDate());
 
   function renderSubLabel() {
@@ -108,34 +106,19 @@
     return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
   }
 
-  if (logDateInput) {
-    var todayIso = toIsoDate(new Date());
-    logDateInput.max = todayIso;
-    logDateInput.value = isoDate;
-    renderSubLabel();
+  renderSubLabel();
 
-    logDateInput.addEventListener("change", function () {
-      userChangedDate = true;
-      isoDate = logDateInput.value || isoDate;
+  // If the tab was left open across midnight/04:00, pick up the new day when it's reopened.
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState !== "visible") return;
+    var fresh = toIsoDate(defaultLogDate());
+    if (fresh !== isoDate) {
+      isoDate = fresh;
       renderSubLabel();
       loadDraftForCurrentDate();
       runAlreadySubmittedCheck();
-    });
-
-    document.addEventListener("visibilitychange", function () {
-      if (document.visibilityState !== "visible" || userChangedDate) return;
-      var fresh = toIsoDate(defaultLogDate());
-      if (fresh !== isoDate) {
-        isoDate = fresh;
-        logDateInput.value = isoDate;
-        renderSubLabel();
-        loadDraftForCurrentDate();
-        runAlreadySubmittedCheck();
-      }
-    });
-  } else {
-    renderSubLabel();
-  }
+    }
+  });
 
   var metaEl = document.getElementById("meta");
   if (metaEl && window.CONFIG) {
