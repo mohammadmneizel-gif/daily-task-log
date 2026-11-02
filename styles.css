@@ -1,11 +1,11 @@
 /* ===== Reset & iOS-safe base ===== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{margin:0;padding:0;background:#000;height:100%;}
+html,body{margin:0;padding:0;background:#0A0C1C;}
 body{
   font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   color:#fff;
   position:relative;
-  overscroll-behavior:none;
+  min-height:100vh;
   touch-action:manipulation;
 }
 button{font-family:inherit;touch-action:manipulation;user-select:none;cursor:pointer;}
@@ -15,30 +15,16 @@ input,textarea{font-family:inherit;}
    text input/textarea at 16px minimum, never smaller, regardless of visual density. */
 input,textarea,select{font-size:16px;}
 
-/* ===== App shell: height driven by JS (--app-height) to track the Visual Viewport,
-   so the bottom action bar never gets shoved around / hidden by the iOS keyboard. ===== */
+/* ===== App shell: a plain scrolling page. No fixed heights, no inner scroll areas —
+   iOS scrolls the focused field above the keyboard by itself. ===== */
 .app-shell{
-  height:var(--app-height, 100dvh);
-  display:flex;
-  flex-direction:column;
   position:relative;
   z-index:2;
   max-width:460px;
   margin:0 auto;
   width:100%;
-  padding-top:env(safe-area-inset-top, 0px);
-  transform:translateY(var(--vv-top, 0px));
 }
 
-/* With the iOS keyboard open there usually isn't room for the dome or the header's
-   decorative lines — collapse them so the focused card stays visible. */
-.kb-open .dome,.kb-open .rainfield,.kb-open .caustic-overlay,.kb-open .glassdrops,.kb-open .stage{display:none;}
-.kb-open .frame::after{display:none;}
-.kb-open body{background:#0A0C1C;}
-.kb-open header,.kb-open .status-msg{display:none;}
-.kb-open .bottom-bar{padding:6px 16px 8px;}
-.kb-open .app-shell{padding-top:0;}
-.kb-open main{padding-top:10px;}
 
 /* ===================== SCENE (fixed, behind everything, decorative) ===================== */
 .stage{position:fixed;inset:0;z-index:0;overflow:hidden;background:
@@ -68,7 +54,7 @@ input,textarea,select{font-size:16px;}
 @keyframes fall{from{transform:translateY(-10%)}to{transform:translateY(110vh)}}
 
 /* ===================== GLASS PANEL ===================== */
-.domewrap{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;flex:1;min-height:0;}
+.domewrap{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;}
 .dome{width:min(180px,38vw,14vh);height:min(180px,38vw,14vh);border-radius:50%;position:relative;margin-bottom:calc(-0.1 * min(180px, 38vw, 14vh));z-index:1;flex-shrink:0;
   background:radial-gradient(circle at 42% 35%,rgba(255,255,255,.3),rgba(255,196,120,.1) 55%,rgba(45,226,201,.05) 80%);
   border:1px solid rgba(255,255,255,.3);
@@ -77,15 +63,9 @@ input,textarea,select{font-size:16px;}
   background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%);filter:blur(2px);}
 @keyframes ambientsway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.2deg)}}
 
-.frame{
-  width:100%;position:relative;z-index:2;overflow:hidden;
-  border-radius:clamp(28px,7vw,44px) clamp(32px,8vw,56px) clamp(24px,6vw,40px) clamp(34px,8.5vw,60px);
-  background:linear-gradient(170deg,rgba(40,44,62,.78),rgba(14,16,30,.82) 55%,rgba(18,40,44,.8));
-  border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 30px 60px rgba(0,0,0,.55);
-  display:flex;flex-direction:column;flex:1;min-height:0;
-}
-#logForm{display:flex;flex-direction:column;flex:1;min-height:0;}
+/* App look: no big glass panel or dome — a compact top bar, then cards on the dark scene. */
+.dome,.caustic-overlay,.glassdrops,.frame::after{display:none;}
+.frame{width:100%;position:relative;z-index:2;}
 .caustic-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:4;opacity:.22;pointer-events:none;}
 .frame::after{content:'';position:absolute;top:0;left:-40%;width:45%;height:100%;z-index:5;
   background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.28) 50%,transparent 75%);
@@ -99,16 +79,18 @@ input,textarea,select{font-size:16px;}
 
 /* Top padding must clear the dome's own overlap (margin-bottom: -0.1 * its size, up to -18px)
    plus a little breathing room, or the heading text renders under the dome's glow. */
-header{padding:36px 22px 14px;position:relative;z-index:6;text-align:center;flex-shrink:0;}
+header{position:sticky;top:0;z-index:20;padding:calc(12px + env(safe-area-inset-top, 0px)) 18px 10px;text-align:left;
+  background:rgba(10,12,28,.94);border-bottom:1px solid rgba(255,255,255,.1);}
+.eyebrow,.meta{display:none;}
 .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#FFE3B8;font-weight:600;margin:0 0 8px;}
-h1{margin:0;font-size:clamp(20px,5.5vw,25px);font-weight:700;letter-spacing:-.4px;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.55);}
-.sub{margin:8px 0 0;font-size:12.5px;color:rgba(255,255,255,.65);}
-.meta{display:flex;gap:8px;margin-top:14px;justify-content:center;flex-wrap:wrap;}
+h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.4px;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.55);}
+.sub{margin:3px 0 0;font-size:12.5px;color:rgba(255,255,255,.65);}
+.meta{display:none;}
 .meta span{font-size:11px;color:#fff;border:1px solid rgba(255,255,255,.22);background:rgba(45,226,201,.08);
   padding:5px 12px;border-radius:999px;}
 
 /* scrollable task list */
-main{padding:6px 16px 18px;position:relative;z-index:6;overflow-y:auto;-webkit-overflow-scrolling:touch;flex:1;min-height:0;}
+main{padding:14px 16px 8px;position:relative;z-index:6;}
 .card{background:linear-gradient(165deg,rgba(255,255,255,.2),rgba(255,255,255,.08));
   border:1px solid rgba(255,255,255,.18);
   border-radius:24px;padding:16px;margin-bottom:14px;position:relative;
@@ -145,10 +127,9 @@ textarea{resize:vertical;min-height:62px;}
 .add-btn:disabled{opacity:.45;}
 .remove-btn[hidden]{display:none;}
 
-/* bottom action bar — a normal flex child, never position:fixed, so iOS keyboard resize
-   (handled via --app-height) keeps it exactly where expected, no floating/overlap bugs */
+/* bottom action bar — sits at the end of the form in normal flow (not fixed/sticky) */
 .bottom-bar{
-  flex-shrink:0;z-index:7;padding:10px 16px calc(env(safe-area-inset-bottom, 10px) + 10px);
+  z-index:7;padding:10px 16px calc(env(safe-area-inset-bottom, 10px) + 16px);
   position:relative;
 }
 .submit{width:100%;padding:16px;border:1px solid rgba(255,255,255,.4);border-radius:20px;font-weight:700;

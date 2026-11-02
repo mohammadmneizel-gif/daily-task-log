@@ -6,21 +6,8 @@
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- iOS keyboard-safe viewport height ---------- */
-  function setAppHeight() {
-    var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    var top = window.visualViewport ? window.visualViewport.offsetTop : 0;
-    document.documentElement.style.setProperty("--app-height", vh + "px");
-    document.documentElement.style.setProperty("--vv-top", top + "px");
-    var keyboardOpen = window.visualViewport && vh < window.innerHeight * 0.75;
-    document.documentElement.classList.toggle("kb-open", !!keyboardOpen);
-  }
-  setAppHeight();
-  window.addEventListener("resize", setAppHeight);
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", setAppHeight);
-    window.visualViewport.addEventListener("scroll", setAppHeight);
-  }
+  // No keyboard/viewport scripting on purpose: the page is a normal scrolling document and
+  // iOS itself scrolls the focused field above the keyboard.
 
   /* ---------- decorative scene (non-interactive, best-effort) ---------- */
   function spawn(container, className, count, build) {
@@ -250,12 +237,6 @@
 
     return card;
   }
-
-  taskList.addEventListener("focusin", function (e) {
-    var t = e.target;
-    if (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA") return;
-    setTimeout(function () { t.scrollIntoView({ block: "center", behavior: "smooth" }); }, 350);
-  });
 
   taskList.appendChild(makeCard());
   renumber();
