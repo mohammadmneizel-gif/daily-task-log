@@ -9,7 +9,9 @@
   /* ---------- iOS keyboard-safe viewport height ---------- */
   function setAppHeight() {
     var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    var top = window.visualViewport ? window.visualViewport.offsetTop : 0;
     document.documentElement.style.setProperty("--app-height", vh + "px");
+    document.documentElement.style.setProperty("--vv-top", top + "px");
     var keyboardOpen = window.visualViewport && vh < window.innerHeight * 0.75;
     document.documentElement.classList.toggle("kb-open", !!keyboardOpen);
   }
@@ -17,7 +19,7 @@
   window.addEventListener("resize", setAppHeight);
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", setAppHeight);
-    window.visualViewport.addEventListener("scroll", function () { window.scrollTo(0, 0); });
+    window.visualViewport.addEventListener("scroll", setAppHeight);
   }
 
   /* ---------- decorative scene (non-interactive, best-effort) ---------- */
@@ -35,7 +37,7 @@
   if (!reducedMotion) {
     var stars = document.getElementById("stars");
     if (stars) {
-      spawn(stars, "star", 50, function (el) {
+      spawn(stars, "star", 24, function (el) {
         el.style.left = Math.random() * 100 + "%";
         el.style.top = Math.random() * 100 + "%";
         el.style.animationDuration = 2 + Math.random() * 4 + "s";
@@ -44,7 +46,7 @@
     }
     var rainfield = document.getElementById("rainfield");
     if (rainfield) {
-      spawn(rainfield, "streak", 18, function (el) {
+      spawn(rainfield, "streak", 8, function (el) {
         el.style.left = Math.random() * 100 + "%";
         el.style.animationDuration = 1.1 + Math.random() * 1.3 + "s";
         el.style.animationDelay = Math.random() * 3 + "s";
@@ -61,7 +63,7 @@
 
   var glassdrops = document.getElementById("glassdrops");
   if (glassdrops) {
-    spawn(glassdrops, "drop", 8, function (el) {
+    spawn(glassdrops, "drop", 4, function (el) {
       el.style.left = Math.random() * 100 + "%";
       el.style.animationDuration = 5 + Math.random() * 6 + "s";
       el.style.animationDelay = Math.random() * 6 + "s";
@@ -369,7 +371,15 @@
       var mainInput = card.querySelector(".f-main");
       var mainTask = mainInput.value.trim();
       var description = card.querySelector(".f-desc").value.trim();
-      var duration = card.querySelector(".f-dur").value.trim();
+      var durInput = card.querySelector(".f-dur");
+      var duration = durInput.value.trim();
+      if (/^\d{1,2}$/.test(duration)) {
+        duration = duration + ":00";
+        durInput.value = duration;
+      }
+      var durationOk = duration === "" || /^\d{1,2}:[0-5]\d$/.test(duration);
+      durInput.closest(".row2").querySelector(".err-dur").style.display = durationOk ? "none" : "block";
+      if (!durationOk) valid = false;
       var links = card.querySelector(".f-links").value.trim();
       var statusPill = card.querySelector('.f-status[aria-pressed="true"]');
       var status = statusPill ? statusPill.dataset.value : "";
@@ -404,7 +414,7 @@
     e.preventDefault();
     var result = collectTasks();
     if (!result.valid) {
-      statusMsg.textContent = "Please fill in every task's main title before saving.";
+      statusMsg.textContent = "Please give every task a main title, and write any duration like 4:30.";
       statusMsg.className = "status-msg error";
       var firstInvalid = taskList.querySelector(".card.invalid");
       if (firstInvalid) firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });

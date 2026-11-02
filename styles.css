@@ -27,11 +27,14 @@ input,textarea,select{font-size:16px;}
   margin:0 auto;
   width:100%;
   padding-top:env(safe-area-inset-top, 0px);
+  transform:translateY(var(--vv-top, 0px));
 }
 
 /* With the iOS keyboard open there usually isn't room for the dome or the header's
    decorative lines — collapse them so the focused card stays visible. */
-.kb-open .dome{display:none;}
+.kb-open .dome,.kb-open .rainfield,.kb-open .caustic-overlay,.kb-open .glassdrops,.kb-open .stage{display:none;}
+.kb-open .frame::after{display:none;}
+.kb-open body{background:#0A0C1C;}
 .kb-open .eyebrow,.kb-open .meta,.kb-open .sub{display:none;}
 .kb-open header{padding:8px 22px 6px;}
 
@@ -55,7 +58,7 @@ input,textarea,select{font-size:16px;}
 @keyframes drift2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-20px)}}
 @keyframes drift3{0%,100%{transform:translate(0,0)}50%{transform:translate(25px,15px)}}
 .vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 35%,transparent 30%,rgba(0,0,0,.55) 85%,rgba(0,0,0,.85) 100%);}
-.grain{position:absolute;inset:0;opacity:.045;mix-blend-mode:overlay;
+.grain{display:none;position:absolute;inset:0;opacity:.045;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 .rainfield{position:fixed;inset:0;z-index:1;pointer-events:none;}
 .streak{position:absolute;top:-10%;width:1.5px;height:120px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.35),transparent);
@@ -66,10 +69,8 @@ input,textarea,select{font-size:16px;}
 .domewrap{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;flex:1;min-height:0;}
 .dome{width:min(180px,38vw);height:min(180px,38vw);border-radius:50%;position:relative;margin-bottom:calc(-0.1 * min(180px, 38vw));z-index:1;flex-shrink:0;
   background:radial-gradient(circle at 42% 35%,rgba(255,255,255,.3),rgba(255,196,120,.1) 55%,rgba(45,226,201,.05) 80%);
-  backdrop-filter:blur(10px) saturate(160%);-webkit-backdrop-filter:blur(10px) saturate(160%);
   border:1px solid rgba(255,255,255,.3);
-  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 30px 70px rgba(0,0,0,.6),0 0 60px rgba(255,196,120,.12);
-  animation:ambientsway 9s ease-in-out infinite;}
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 20px 40px rgba(0,0,0,.5);}
 .dome::before{content:'';position:absolute;top:14%;left:18%;width:30%;height:20%;border-radius:50%;
   background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%);filter:blur(2px);}
 @keyframes ambientsway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.2deg)}}
@@ -78,16 +79,16 @@ input,textarea,select{font-size:16px;}
   width:100%;position:relative;z-index:2;overflow:hidden;
   border-radius:clamp(28px,7vw,44px) clamp(32px,8vw,56px) clamp(24px,6vw,40px) clamp(34px,8.5vw,60px);
   background:linear-gradient(170deg,rgba(255,255,255,.12),rgba(255,255,255,.02) 42%,rgba(45,226,201,.06));
-  backdrop-filter:blur(26px) saturate(175%);-webkit-backdrop-filter:blur(26px) saturate(175%);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.18);
-  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 -22px 50px rgba(0,0,0,.2) inset, 0 50px 100px rgba(0,0,0,.65);
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 30px 60px rgba(0,0,0,.55);
   display:flex;flex-direction:column;flex:1;min-height:0;
 }
 #logForm{display:flex;flex-direction:column;flex:1;min-height:0;}
 .caustic-overlay{position:absolute;inset:0;width:100%;height:100%;z-index:4;opacity:.3;mix-blend-mode:screen;pointer-events:none;}
 .frame::after{content:'';position:absolute;top:0;left:-40%;width:45%;height:100%;z-index:5;
   background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.28) 50%,transparent 75%);
-  transform:translateX(0) skewX(-8deg);animation:wipe 9s ease-in-out infinite;pointer-events:none;will-change:transform;}
+  transform:translateX(0) skewX(-8deg);animation:wipe 14s ease-in-out infinite;pointer-events:none;will-change:transform;}
 @keyframes wipe{0%{transform:translateX(0) skewX(-8deg)}50%{transform:translateX(365%) skewX(-8deg)}100%{transform:translateX(365%) skewX(-8deg)}}
 .glassdrops{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;}
 .drop{position:absolute;width:5px;height:7px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
