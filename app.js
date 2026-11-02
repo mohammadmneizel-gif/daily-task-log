@@ -251,6 +251,12 @@
     return card;
   }
 
+  taskList.addEventListener("focusin", function (e) {
+    var t = e.target;
+    if (t.tagName !== "INPUT" && t.tagName !== "TEXTAREA") return;
+    setTimeout(function () { t.scrollIntoView({ block: "center", behavior: "smooth" }); }, 350);
+  });
+
   taskList.appendChild(makeCard());
   renumber();
   addBtn.addEventListener("click", function () {
