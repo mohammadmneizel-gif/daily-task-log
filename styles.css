@@ -95,7 +95,9 @@ input,textarea,select{font-size:16px;}
   filter:blur(.3px);animation:slide linear infinite;will-change:transform;}
 @keyframes slide{from{transform:translateY(-5%)}to{transform:translateY(var(--fall,720px));}}
 
-header{padding:14px 22px 14px;position:relative;z-index:6;text-align:center;flex-shrink:0;}
+/* Top padding must clear the dome's own overlap (margin-bottom: -0.1 * its size, up to -18px)
+   plus a little breathing room, or the heading text renders under the dome's glow. */
+header{padding:36px 22px 14px;position:relative;z-index:6;text-align:center;flex-shrink:0;}
 .eyebrow{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#FFE3B8;font-weight:600;margin:0 0 8px;}
 h1{margin:0;font-size:clamp(20px,5.5vw,25px);font-weight:700;letter-spacing:-.4px;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.55);}
 .sub{margin:8px 0 0;font-size:12.5px;color:rgba(255,255,255,.65);}
