@@ -104,6 +104,7 @@
     if (fresh !== isoDate) {
       isoDate = fresh;
       renderSubLabel();
+      resetDayType();
       loadDraftForCurrentDate();
       runAlreadySubmittedCheck();
     }
@@ -338,6 +339,36 @@
   var statusMsg = document.getElementById("statusMsg");
   var submitBtn = document.getElementById("submitBtn");
 
+  /* ---------- day type: worked / off day (Friday and Saturday must be answered) ---------- */
+  var dayQ = document.getElementById("dayQ");
+  var workBtn = document.getElementById("workBtn");
+  var offBtn = document.getElementById("offBtn");
+  var tasksArea = document.getElementById("tasksArea");
+  var dayType = null; // "work" | "off" | null (not answered yet)
+
+  function isWeekendDay() {
+    var wd = parseIsoDateLocal(isoDate).getDay();
+    return wd === 5 || wd === 6;
+  }
+
+  function renderDayBar() {
+    var wd = parseIsoDateLocal(isoDate).getDay();
+    dayQ.textContent = isWeekendDay() ? WEEKDAYS[wd] + " — is it an off day?" : "Type of day";
+    workBtn.setAttribute("aria-pressed", String(dayType === "work"));
+    offBtn.setAttribute("aria-pressed", String(dayType === "off"));
+    tasksArea.hidden = dayType === "off";
+    submitBtn.textContent = dayType === "off" ? "Save off day" : "Save to Sheet";
+  }
+
+  function resetDayType() {
+    dayType = isWeekendDay() ? null : "work";
+    renderDayBar();
+  }
+
+  workBtn.addEventListener("click", function () { dayType = "work"; renderDayBar(); });
+  offBtn.addEventListener("click", function () { dayType = "off"; renderDayBar(); });
+  resetDayType();
+
   if (!authToken) {
     statusMsg.textContent = "Open this page from the Telegram reminder link once to unlock saving.";
     statusMsg.className = "status-msg error";
@@ -399,7 +430,13 @@
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var result = collectTasks();
+    if (dayType === null) {
+      statusMsg.textContent = "Tell me first: was it an off day, or did you work?";
+      statusMsg.className = "status-msg error";
+      return;
+    }
+    var isOff = dayType === "off";
+    var result = isOff ? { valid: true, tasks: [] } : collectTasks();
     if (!result.valid) {
       statusMsg.textContent = "Please give every task a main title, and write any duration like 4:30.";
       statusMsg.className = "status-msg error";
@@ -425,7 +462,7 @@
     statusMsg.className = "status-msg";
 
     if (!currentSubmissionId) currentSubmissionId = newSubmissionId();
-    var payload = { token: authToken, date: isoDate, tasks: result.tasks, submissionId: currentSubmissionId };
+    var payload = { token: authToken, date: isoDate, tasks: result.tasks, off: isOff, submissionId: currentSubmissionId };
     var url = window.CONFIG.APPS_SCRIPT_URL;
 
     fetch(url, {
@@ -450,10 +487,10 @@
         cardCount = 0;
         taskList.appendChild(makeCard());
         renumber();
-        statusMsg.textContent = "Saved to your sheet ✓ — add more anytime";
+        statusMsg.textContent = isOff ? "Off day saved to your sheet ✓" : "Saved to your sheet ✓ — add more anytime";
         statusMsg.className = "status-msg success";
         submitBtn.disabled = false;
-        submitBtn.textContent = "Save to Sheet";
+        renderDayBar();
       })
       .catch(function (err) {
         statusMsg.textContent = "Couldn't save — " + err.message + ". Tap Save to retry.";

@@ -121,6 +121,9 @@ textarea{resize:vertical;min-height:62px;}
   min-height:44px;transition:background .15s,color .15s,border-color .15s;}
 .pill[aria-pressed="true"]{background:linear-gradient(135deg,#2DE2C9,#FFE3B8);color:#1d1406;border-color:transparent;
   box-shadow:0 6px 18px rgba(255,227,184,.3);}
+.daybar{margin-bottom:14px;}
+.day-q{margin:0 0 8px;font-size:13px;font-weight:600;color:rgba(255,255,255,.8);}
+#tasksArea[hidden]{display:none;}
 .add-btn{width:100%;padding:14px;border:1px dashed rgba(255,255,255,.28);border-radius:18px;background:rgba(255,255,255,.05);
   color:rgba(255,255,255,.72);font-weight:600;font-size:13px;min-height:48px;}
 .add-btn:active{background:rgba(255,255,255,.1);}

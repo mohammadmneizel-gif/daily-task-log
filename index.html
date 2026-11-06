@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=8">
 <script>
   // Catches failures as early as possible (even config.js/app.js failing to load), so a real
   // failure on a phone with no devtools shows up as visible text instead of a silent blank page.
@@ -74,8 +74,17 @@
 
       <form id="logForm" novalidate>
         <main>
-          <div id="taskList"></div>
-          <button type="button" class="add-btn" id="addBtn">+ Add another task</button>
+          <div class="daybar" id="dayBar">
+            <p class="day-q" id="dayQ"></p>
+            <div class="status-pills" role="group" aria-label="Day type">
+              <button type="button" class="pill" id="workBtn" aria-pressed="false">I worked</button>
+              <button type="button" class="pill" id="offBtn" aria-pressed="false">Off day</button>
+            </div>
+          </div>
+          <div id="tasksArea">
+            <div id="taskList"></div>
+            <button type="button" class="add-btn" id="addBtn">+ Add another task</button>
+          </div>
         </main>
         <div class="bottom-bar">
           <button type="submit" class="submit" id="submitBtn">Save to Sheet</button>
@@ -87,6 +96,6 @@
 </div>
 
 <script src="config.js"></script>
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>
